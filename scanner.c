@@ -9,10 +9,13 @@ typedef struct {
 
 Scanner scanner;
 
-void initScanner(const char* source) { // const so we can only read and don't do weird stuff
+Scanner initScanner(const char* source) { // const so we can only read and don't do weird stuff
     scanner.start = source;
     scanner.current = source;
     scanner.line = 1;
+
+    // remove this later and make it void. we don't need to expose the scanner
+    return scanner;
 }
 
 static Token makeToken(TokenType type) {
@@ -99,6 +102,22 @@ static void skipWhitespace() {
     }
 }
 
+static bool isAlpha(char car) {
+    return (car >= 'a' && car <= 'b') ||
+           (car >= 'A' && car <= 'B') ||
+           car == '_';
+}
+
+static bool isDigit(char car) {
+    return car >= '0' && car <= '9';
+}
+
+static void identifier() {
+    while (isAlpha(peek()) || isDigit(peek())) {
+        advance();
+    }
+}
+
 Token scan() { 
     skipWhitespace();
 
@@ -106,6 +125,15 @@ Token scan() {
     scanner.start = scanner.current;
 
     switch (*scanner.current) {
+        case 'R': {
+            if (findKeyword("RETURN", 6)) { return makeToken(TOKEN_RETURN); }
+
+            if (findKeyword("REM", 3)) { return makeToken(TOKEN_REM); }
+
+            identifier();
+            makeToken(TOKEN_IDENTIFIER);
+        }
         case '{': return makeToken(TOKEN_LEFT_PAREN);
+        default: return makeToken(TOKEN_CARET);
     }
 }
