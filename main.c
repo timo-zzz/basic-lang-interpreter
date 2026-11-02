@@ -1,7 +1,6 @@
-#include <stdio.h>
-
 #include "common.h"
 #include "scanner.h"
+#include "debug.h"
 
 static char* readFile(const char* filePath) {
     FILE* file;
@@ -10,7 +9,7 @@ static char* readFile(const char* filePath) {
     file = fopen(filePath, "rb");
     if (file == NULL) {
         perror("No file exists at this path");
-        return 2;
+        exit(74);
     }
 
     // Get the file size. We use fseeko, ftello, and off_t instead of fseek, ftell, and long/size_t since those methods return
@@ -23,7 +22,7 @@ static char* readFile(const char* filePath) {
     if (buffer == NULL) {
         perror("Memory allocation failed");
         fclose(file);
-        return 2;
+        exit(74);
     }
 
     size_t bytesRead = fread(buffer, sizeof(char), fileSize, file);
@@ -39,10 +38,12 @@ static char* readFile(const char* filePath) {
 int main(int argc, char* argv[]) {
     char* text = readFile(argv[1]); // First argument (idx 0) in argv is name of exe being run
 
-    int i = 0;
-    while (text[i] != '\0') {
+    // while (true) {
         Token token = scan();
+        // if (token.type == TOKEN_END) {
+        //     break;
+        // }
         printToken(token);
-    }
+    // }
     return 0;
 } 

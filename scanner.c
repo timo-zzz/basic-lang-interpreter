@@ -18,6 +18,12 @@ Scanner initScanner(const char* source) { // const so we can only read and don't
     return scanner;
 }
 
+// Moves onto the next character and returns the current one
+static char advance() {
+    scanner.current++;
+    return scanner.current[-1];
+}
+
 static Token makeToken(TokenType type) {
     Token token;
     token.type = type;
@@ -28,12 +34,6 @@ static Token makeToken(TokenType type) {
     advance();
 
     return token;
-}
-
-// Moves onto the next character and returns the current one
-static char advance() {
-    scanner.current++;
-    return scanner.current[-1];
 }
 
 // Shows the next character without advancing
@@ -131,9 +131,9 @@ Token scan() {
             if (findKeyword("REM", 3)) { return makeToken(TOKEN_REM); }
 
             identifier();
-            makeToken(TOKEN_IDENTIFIER);
+            return makeToken(TOKEN_IDENTIFIER);
         }
-        case '{': return makeToken(TOKEN_LEFT_PAREN);
+        case '{': return makeToken(TOKEN_LEFT_PAREN); 
         default: return makeToken(TOKEN_CARET);
     }
 }

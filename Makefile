@@ -1,5 +1,5 @@
-FILES = scanner.c scanner.h
-COMPILEDHEADERS = scanner.h.gch
+FILES = common.h debug.c debug.h main.c scanner.c scanner.h 
+COMPILEDHEADERS = scanner.h.gch common.h.gch debug.h.gch
 
 all:
 	gcc $(FILES)
