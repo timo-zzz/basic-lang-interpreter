@@ -12,7 +12,7 @@ typedef enum {
     TOKEN_PLUS, TOKEN_MINUS, TOKEN_STAR, TOKEN_SLASH, TOKEN_CARET, TOKEN_LEFT_PAREN, TOKEN_RIGHT_PAREN,
 
     // Misc. BASIC relies on newlines to end statements
-    TOKEN_NEWLINE, TOKEN_ERROR, TOKEN_IDENTIFIER
+    TOKEN_NEWLINE, TOKEN_ERROR, TOKEN_IDENTIFIER, TOKEN_EOF
 } TokenType;
 
 typedef struct {
@@ -23,6 +23,7 @@ typedef struct {
     int length; // Length of lexeme for indexing
 } Token;
 
+void initScanner(const char* source);
 Token scan();
 
 #endif

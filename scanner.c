@@ -9,19 +9,22 @@ typedef struct {
 
 Scanner scanner;
 
-Scanner initScanner(const char* source) { // const so we can only read and don't do weird stuff
+void initScanner(const char* source) { // const so we can only read and don't do weird stuff
     scanner.start = source;
     scanner.current = source;
     scanner.line = 1;
-
-    // remove this later and make it void. we don't need to expose the scanner
-    return scanner;
 }
 
 // Moves onto the next character and returns the current one
 static char advance() {
     scanner.current++;
+    printf("we advanced\n");
     return scanner.current[-1];
+}
+
+// Shows the next character without advancing
+static char peek() {
+    return *scanner.current;
 }
 
 static Token makeToken(TokenType type) {
@@ -29,16 +32,12 @@ static Token makeToken(TokenType type) {
     token.type = type;
     token.start = scanner.current;
     token.length = scanner.current - token.start;
+    printf("token namde\n");
 
     // Next char! Since we're at the end of this token
     advance();
 
     return token;
-}
-
-// Shows the next character without advancing
-static char peek() {
-    return *scanner.current;
 }
 
 // Tells us if a char is whitespace or not
@@ -83,7 +82,7 @@ static bool findKeyword(const char* lexeme, int len) {
     }
 
     // Whitespace signifies the end of this token, so it doesn't continue and it is what we think it is
-    if (isWhitespace(peek())) {
+    if (isWhitespace(peek()) || peek() == '\0') { // 2nd condition ensures token at the end of a file isnt mistakenly marked as an identifier
         return true;
     }
 
@@ -119,12 +118,16 @@ static void identifier() {
 }
 
 Token scan() { 
+    printf("scan started\n");
     skipWhitespace();
+    printf("whitespace skipped\n");
 
     // Set the start of the scanner to the start of the next lexeme. Should be done after we skipWhitespace so we don't include whitespace in our lexeme.
     scanner.start = scanner.current;
+    printf("start = current\n");
 
     switch (*scanner.current) {
+        printf("switch started\n");
         case 'R': {
             if (findKeyword("RETURN", 6)) { return makeToken(TOKEN_RETURN); }
 
@@ -133,6 +136,13 @@ Token scan() {
             identifier();
             return makeToken(TOKEN_IDENTIFIER);
         }
+        case 'E': {
+            if (findKeyword("END", 3)) { return makeToken(TOKEN_END); }
+
+            identifier();
+            return makeToken(TOKEN_IDENTIFIER);
+        }
+        case '\0': { return makeToken(TOKEN_EOF); }
         case '{': return makeToken(TOKEN_LEFT_PAREN); 
         default: return makeToken(TOKEN_CARET);
     }

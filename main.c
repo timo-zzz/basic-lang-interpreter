@@ -36,14 +36,22 @@ static char* readFile(const char* filePath) {
 
 // arg c is arg count
 int main(int argc, char* argv[]) {
+    printf("ok main started\n");
     char* text = readFile(argv[1]); // First argument (idx 0) in argv is name of exe being run
+    printf("yay we read the file\n");
 
-    // while (true) {
+    initScanner(text);
+
+    while (true) {
         Token token = scan();
-        // if (token.type == TOKEN_END) {
-        //     break;
-        // }
+        printf("we scnned ts token\n");
+        if (token.type == TOKEN_END) {
+            break;
+        }
         printToken(token);
-    // }
+        printf("printed that jawn\n");
+        token = scan();
+        printToken(token);
+    }
     return 0;
 } 
