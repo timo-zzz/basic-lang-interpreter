@@ -86,6 +86,7 @@ static bool findKeyword(const char* lexeme, int len) {
         return true;
     }
 
+    // Means its an identifier
     return false;
 
     // how to return right token?
@@ -128,10 +129,10 @@ Token scan() {
 
     switch (*scanner.current) {
         printf("switch started\n");
-        case 'R': {
-            if (findKeyword("RETURN", 6)) { return makeToken(TOKEN_RETURN); }
 
-            if (findKeyword("REM", 3)) { return makeToken(TOKEN_REM); }
+        // Keywords/identifiers first!
+        case 'D': {
+            if (findKeyword("DEF", 3)) { return makeToken(TOKEN_DEF); }
 
             identifier();
             return makeToken(TOKEN_IDENTIFIER);
@@ -142,8 +143,57 @@ Token scan() {
             identifier();
             return makeToken(TOKEN_IDENTIFIER);
         }
-        case '\0': { return makeToken(TOKEN_EOF); }
+        case 'F': {
+            if (findKeyword("FOR", 3)) { return makeToken(TOKEN_FOR); }
+
+            identifier();
+            return makeToken(TOKEN_IDENTIFIER);
+        }
+        case 'G': {
+            if (findKeyword("GOTO", 4)) { return makeToken(TOKEN_GOTO); }
+
+            identifier();
+            return makeToken(TOKEN_IDENTIFIER);
+        }
+        case 'I': {
+            if (findKeyword("IF", 2)) { return makeToken(TOKEN_IF); }
+            
+            identifier();
+            return makeToken(TOKEN_IDENTIFIER);
+        }
+        case 'L': {
+            if (findKeyword("LET", 3)) { return makeToken(TOKEN_LET); }
+
+            identifier();
+            return makeToken(TOKEN_IDENTIFIER);
+        }
+        case 'N': {
+            if (findKeyword("NEXT", 4)) { return makeToken(TOKEN_NEXT); }
+        
+            identifier();
+            return makeToken(TOKEN_IDENTIFIER);
+        }
+        case 'P': {
+            if (findKeyword("PRINT", 5)) { return makeToken(TOKEN_PRINT); }
+
+            identifier();
+            return makeToken(TOKEN_IDENTIFIER);
+        }
+        case 'R': {
+            if (findKeyword("RETURN", 6)) { return makeToken(TOKEN_RETURN); }
+
+            if (findKeyword("REM", 3)) { return makeToken(TOKEN_REM); }
+
+            identifier();
+            return makeToken(TOKEN_IDENTIFIER);
+        }
+
         case '{': return makeToken(TOKEN_LEFT_PAREN); 
-        default: return makeToken(TOKEN_CARET);
+        case '}': return makeToken(TOKEN_RIGHT_PAREN);
+        case '\0': { return makeToken(TOKEN_EOF); }
+        
     }
 }
+
+
+
