@@ -8,7 +8,7 @@ typedef enum {
     // Literals
     TOKEN_NUMBER, TOKEN_STRING,
 
-    // Math operators and parentheses
+    // Math operators and bracket
     TOKEN_PLUS, TOKEN_MINUS, TOKEN_STAR, TOKEN_SLASH, TOKEN_CARET, TOKEN_LEFT_PAREN, TOKEN_RIGHT_PAREN,
 
     // Misc. BASIC relies on newlines to end statements

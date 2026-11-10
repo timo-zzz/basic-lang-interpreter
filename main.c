@@ -42,7 +42,8 @@ int main(int argc, char* argv[]) {
 
     initScanner(text);
 
-    while (true) {
+    for (int i = 0; i < 3; i++) {
+    // while (true) {
         Token token = scan();
         printf("we scnned ts token\n");
         if (token.type == TOKEN_END) {

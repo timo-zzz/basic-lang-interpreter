@@ -37,6 +37,11 @@ static Token makeToken(TokenType type) {
     // Next char! Since we're at the end of this token
     advance();
 
+    // Advance past closing quote in string tokens
+    if (type == TOKEN_STRING) {
+        advance();
+    }
+
     return token;
 }
 
@@ -58,8 +63,7 @@ static Token string() {
         advance();
     }
 
-    // Consume closing quote
-    advance();
+    // We don't advance past the closing quote here because we don't want it to be part of the lexeme
 
     // mahybe add support for escape sequences later
     return makeToken(TOKEN_STRING);
@@ -112,6 +116,25 @@ static bool isDigit(char car) {
     return car >= '0' && car <= '9';
 }
 
+// Used to scan a number token
+static Token number() {
+    int decimalCount = 0; // Must not exceed 1
+    while (isDigit(peek()) || peek() == '.') {
+        // this is so inefficient
+        if (peek() == '.') {
+            decimalCount++;
+            if (decimalCount > 1) {
+                perror("More than 1 decimal in a number");
+                exit(74);
+            }
+        }
+
+        advance();
+    }
+
+    return makeToken(TOKEN_NUMBER);
+}
+
 static void identifier() {
     while (isAlpha(peek()) || isDigit(peek())) {
         advance();
@@ -127,6 +150,7 @@ Token scan() {
     scanner.start = scanner.current;
     printf("start = current\n");
 
+    if (isDigit(peek())) return number();
     switch (*scanner.current) {
         printf("switch started\n");
 
@@ -188,10 +212,28 @@ Token scan() {
             return makeToken(TOKEN_IDENTIFIER);
         }
 
+        // Literals
+        case '"': return string();
+
+        // Operators and brackets
+        case '+': return makeToken(TOKEN_PLUS);
+        case '-': return makeToken(TOKEN_MINUS);
+        case '*': return makeToken(TOKEN_STAR);
+        case '/': return makeToken(TOKEN_SLASH);
+        case '^': return makeToken(TOKEN_CARET);
         case '{': return makeToken(TOKEN_LEFT_PAREN); 
         case '}': return makeToken(TOKEN_RIGHT_PAREN);
-        case '\0': { return makeToken(TOKEN_EOF); }
+
+        // Fun stuff
+        case '\n': return makeToken(TOKEN_NEWLINE);
+        case '\0': return makeToken(TOKEN_EOF);
         
+        // Other identifiers
+        default: {
+            if (isAlpha(peek())) {
+                identifier();
+            }
+        }
     }
 }
 
