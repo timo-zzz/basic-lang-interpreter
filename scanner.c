@@ -42,12 +42,17 @@ static Token makeToken(TokenType type) {
         advance();
     }
 
+    if (type == TOKEN_REM) {
+        while (peek() != '\n') advance();
+    }
+
     return token;
 }
 
 // Tells us if a char is whitespace or not
 static bool isWhitespace(char car) {
-    return car == ' ' || car == '   ';
+    return car == ' ' || car == '\t' || 
+           car == '\r';
 }
 
 // Scans a string literal and returns its token. Should be called in the " case.
@@ -86,7 +91,7 @@ static bool findKeyword(const char* lexeme, int len) {
     }
 
     // Whitespace signifies the end of this token, so it doesn't continue and it is what we think it is
-    if (isWhitespace(peek()) || peek() == '\0') { // 2nd condition ensures token at the end of a file isnt mistakenly marked as an identifier
+    if (isWhitespace(peek()) || peek() == '\0' || peek() == '\n') { // 2nd condition ensures token at the end of a file isnt mistakenly marked as an identifier
         return true;
     }
 
@@ -118,18 +123,12 @@ static bool isDigit(char car) {
 
 // Used to scan a number token
 static Token number() {
-    int decimalCount = 0; // Must not exceed 1
-    while (isDigit(peek()) || peek() == '.') {
-        // this is so inefficient
-        if (peek() == '.') {
-            decimalCount++;
-            if (decimalCount > 1) {
-                perror("More than 1 decimal in a number");
-                exit(74);
-            }
-        }
+    while (isDigit(peek())) advance();
 
+    if (peek() == '.') {
         advance();
+
+        while (isDigit(peek())) advance();
     }
 
     return makeToken(TOKEN_NUMBER);
